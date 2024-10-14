@@ -112,6 +112,7 @@ import {
 import { createServerModuleMap } from './action-utils'
 import type { DeepReadonly } from '../../shared/lib/deep-readonly'
 import { parseParameter } from '../../shared/lib/router/utils/route-regex'
+import render from '../../compiled/@vercel/og/og'
 
 export type GetDynamicParamFromSegment = (
   // [slug] / [[slug]] / [...slug]
@@ -953,6 +954,21 @@ async function renderToHTMLOrFlightImpl(
 
       // We are going to consume this render both for SSR and for inlining the flight data
       let [renderStream, dataStream] = serverStream.tee()
+      async function logRsc() {
+        let consoleStream
+        ;[renderStream, consoleStream] = renderStream.tee()
+        const reader = consoleStream.getReader()
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) {
+            break
+          }
+          process.stdout.write(value)
+        }
+      }
+      if (process.env.LOG == 'RSC') {
+        logRsc()
+      }
 
       const children = (
         <HeadManagerContext.Provider
