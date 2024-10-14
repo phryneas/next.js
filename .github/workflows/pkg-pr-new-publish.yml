@@ -31,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build and publish to pkg.pr.new
+      - name: Build
+        run: pnpm build
+
+      - name: Publish to pkg.pr.new
         working-directory: packages/next
-        run: pnpm build; npx pkg-pr-new publish --no-template
+        run: npx pkg-pr-new publish --no-template
