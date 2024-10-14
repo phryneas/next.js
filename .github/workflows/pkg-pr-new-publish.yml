@@ -26,5 +26,5 @@ jobs:
         run: pnpm install
 
       - name: Build and publish to pkg.pr.new
-        cwd: packages/next
+        working-directory: packages/next
         run: pnpm build; npx pkg-pr-new publish --no-template
